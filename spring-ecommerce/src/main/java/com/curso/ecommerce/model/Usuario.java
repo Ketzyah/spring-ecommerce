@@ -1,7 +1,16 @@
 package com.curso.ecommerce.model;
 
+import jakarta.persistence.*;
+
+import java.util.List;
+
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String username;
@@ -9,6 +18,13 @@ public class Usuario {
     private String direccion;
     private String tipo;
     private String password;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Producto> productos;
+
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Orden> ordenes;
 
     public Usuario(Integer id, String name, String username, String email, String direccion, String tipo, String password) {
         this.id = id;

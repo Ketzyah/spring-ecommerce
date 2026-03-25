@@ -1,12 +1,40 @@
 package com.curso.ecommerce.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "detalles")
 public class DetalleOrden {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private double cantidad;
     private double price;
     private double total;
+
+    @OneToOne
+    private Orden orden;
+
+    @ManyToOne
+    private Producto producto;
+
+    public Orden getOrden() {
+        return orden;
+    }
+
+    public void setOrden(Orden orden) {
+        this.orden = orden;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 
     public DetalleOrden() {
     }

@@ -1,7 +1,14 @@
 package com.curso.ecommerce.model;
 
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "productos")
 public class Producto {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String description;
@@ -9,7 +16,17 @@ public class Producto {
     private double price;
     private int cantidad;
 
+    @ManyToOne
+    private Usuario usuario;
     public Producto() {
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Producto(Integer id, String name, String description, String imagen, double price, int cantidad) {
