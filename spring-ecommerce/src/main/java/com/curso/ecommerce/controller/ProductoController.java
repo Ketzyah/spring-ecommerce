@@ -3,12 +3,17 @@ package com.curso.ecommerce.controller;
 import com.curso.ecommerce.model.Producto;
 import com.curso.ecommerce.model.Usuario;
 import com.curso.ecommerce.service.ProductoService;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("productos")
@@ -20,7 +25,8 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping
-    public String show(){
+    public String show(Model model){
+        model.addAttribute("productos",productoService.findAll());
         return "producto/show";
     }
 
@@ -29,10 +35,28 @@ public class ProductoController {
         return "producto/create";
     }
 
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable Integer id, Model model){
+    Producto producto = new Producto();
+        Optional<Producto> optinalProducto=productoService.get(id);
+        producto = optinalProducto.get();
+        model.addAttribute("producto", producto);
+        LOGGER.info("Producto buscado: {}", producto);
+
+        return "producto/edit";
+
+    }
+
+    @PostMapping("/update")
+    public String update(Producto producto){
+
+        productoService.update(producto);
+        return "redirect:/productos";
+    }
 
     @PostMapping("/save")
     public String save(Producto producto){
-        LOGGER.info("este es ek ibjeto producto {}", producto);
+        LOGGER.info("este es el objeto producto {}", producto);
         Usuario u = new Usuario(1,"","","","","","");
         producto.setUsuario(u);
         productoService.save(producto);
