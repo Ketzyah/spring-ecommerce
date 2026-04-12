@@ -4,6 +4,8 @@ import com.curso.ecommerce.model.DetalleOrden;
 import com.curso.ecommerce.model.Orden;
 import com.curso.ecommerce.model.Producto;
 import com.curso.ecommerce.model.Usuario;
+import com.curso.ecommerce.service.IDetalleOrdenService;
+import com.curso.ecommerce.service.IOrdenService;
 import com.curso.ecommerce.service.IUsuarioService;
 import com.curso.ecommerce.service.ProductoService;
 import org.slf4j.Logger;
@@ -14,8 +16,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -28,6 +32,12 @@ public class HomeController {
 
     @Autowired
     private IUsuarioService usuarioService;
+
+    @Autowired
+    private IOrdenService ordenService;
+
+    @Autowired
+    private IDetalleOrdenService detalleOrdenService;
 
     private List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
 
@@ -73,10 +83,9 @@ public class HomeController {
         Integer idProducto = producto.getId();
         boolean ingresado = detalles.stream().anyMatch(p -> p.getProducto().getId() == idProducto);
 
-        if(!ingresado){
+        if (!ingresado) {
             detalles.add(detalleOrden);
         }
-
 
 
         sumaTotal = detalles.stream().mapToDouble(dt -> dt.getTotal()).sum();
@@ -90,7 +99,7 @@ public class HomeController {
 
 
     @GetMapping("/getCart")
-    public String getCart(Model model){
+    public String getCart(Model model) {
 
         model.addAttribute("cart", detalles);
         model.addAttribute("orden", orden);
@@ -120,7 +129,7 @@ public class HomeController {
     }
 
     @GetMapping("/order")
-    public  String order(Model model){
+    public String order(Model model) {
 
         Usuario usuario = usuarioService.findById(1).get();
 
@@ -128,6 +137,38 @@ public class HomeController {
         model.addAttribute("orden", orden);
         model.addAttribute("usuario", usuario);
         return "usuario/resumenorden";
+    }
+
+    @GetMapping("/saveOrder")
+    public String saveOrder() {
+
+        Date fechaCreacion = new Date();
+        orden.setFechaCreacion(fechaCreacion);
+        orden.setNumero(ordenService.generarNumeroOrden());
+        Usuario usuario = usuarioService.findById(1).get();
+        orden.setUsuario(usuario);
+        ordenService.save(orden);
+
+        for(DetalleOrden dt:detalles){
+            dt.setOrden(orden);
+            detalleOrdenService.save(dt);
+
+        }
+
+        orden = new Orden();
+
+        detalles.clear();
+        return "redirect:/";
+    }
+
+    @PostMapping("/search")
+    public String search(@RequestParam String name, Model model){
+
+        List<Producto> productos = productoService.findAll().stream()
+                .filter(p -> p.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        model.addAttribute("productos", productos);
+        return "usuario/home";
     }
 
 }

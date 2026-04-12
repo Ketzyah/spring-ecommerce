@@ -50,6 +50,6 @@ public class OrdenServiceImpl implements IOrdenService{
         }else if (numero<10000) {
             numeroConcatenado = "0000" + String.valueOf(numero);
         }
-        return "";
+        return numeroConcatenado;
     }
 }
