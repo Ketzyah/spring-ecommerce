@@ -22,8 +22,9 @@
 <body>
 
 <!-- Navigation -->
+<div th:insert="~{usuario/template_usuario::header}" th:if="${sesion==null}"></div>
 
-<div th:include="usuario/template_usuario.html::header"></div>
+<div th:insert="~{usuario/template_usuario::header-user}" th:unless="${sesion==null}"></div>
 <!-- Page Content -->
 <div class="container">
 
@@ -83,7 +84,7 @@
 <!-- /.container -->
 
 <!-- Footer -->
-<div th:include="usuario/template_usuario.html::footer"></div>
+<div th:insert="~{usuario/template_usuario::footer}"></div>
 
 <!-- Bootstrap core JavaScript -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
