@@ -20,7 +20,7 @@ public class Orden {
     private double total;
 
     @ManyToOne
-    private  Usuario usuario;
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "orden")
     private List<DetalleOrden> detalle;

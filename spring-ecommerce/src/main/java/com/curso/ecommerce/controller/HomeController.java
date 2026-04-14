@@ -156,7 +156,7 @@ public class HomeController {
         orden.setUsuario(usuario);
         ordenService.save(orden);
 
-        for(DetalleOrden dt:detalles){
+        for (DetalleOrden dt : detalles) {
             dt.setOrden(orden);
             detalleOrdenService.save(dt);
 
@@ -169,7 +169,7 @@ public class HomeController {
     }
 
     @PostMapping("/search")
-    public String search(@RequestParam String name, Model model){
+    public String search(@RequestParam String name, Model model) {
 
         List<Producto> productos = productoService.findAll().stream()
                 .filter(p -> p.getName().toLowerCase().contains(name.toLowerCase()))
