@@ -4,16 +4,14 @@ import com.curso.ecommerce.model.Orden;
 import com.curso.ecommerce.model.Usuario;
 import com.curso.ecommerce.service.IOrdenService;
 import com.curso.ecommerce.service.IUsuarioService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,5 +84,26 @@ public class UsuarioController {
         return "usuario/compras";
 
     }
+
+
+    @GetMapping("detalle/{id}")
+    public String detalleCompra(@PathVariable Integer id, HttpSession session, Model model){
+
+        logger.info("id de la orden: {}", id);
+        Optional<Orden> orden = ordenService.findById(id);
+        model.addAttribute("detalles", orden.get().getDetalle());
+        //sesion
+        model.addAttribute("sesion", session.getAttribute("idUsuario"));
+        return "usuario/detallecompra";
+    }
+
+    @GetMapping("cerrar")
+    public String cerrarSesion(HttpSession session){
+        session.removeAttribute("idUsuario");
+        return "redirect:/";
+    }
+
+
+
 
 }
